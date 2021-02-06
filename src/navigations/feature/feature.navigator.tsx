@@ -1,10 +1,11 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import AboutUs from '../../components/About-Us/AboutUs';
-import Home from '../../components/Home/Home';
+import AboutUs from '../../components/features/About-Us/AboutUs';
+import Home from '../../components/features/Home/Home';
 import React from 'react';
 // import Icon from 'react-native-vector-icons/AntDesign';
-import {GRAY, PRIMARY} from '../../styles/colors';
+import {GRAY, PRIMARY, WHITE} from '../../styles/colors';
 import {Text} from 'react-native';
+import {Icon} from 'native-base';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,24 +17,47 @@ export default function FeatureNavigator() {
           switch (route.name) {
             case 'home':
               return focused ? (
-                <Text>Home</Text>
+                <Icon
+                  ios="home"
+                  android="home"
+                  style={{fontSize: 20, color: PRIMARY}}
+                />
               ) : (
-                // <Icon name="home" size={25} color={PRIMARY}></Icon>
-                <Text>Home</Text>
-
-                // <Icon name="home" size={25}></Icon>
+                <Icon
+                  ios="home-outline"
+                  android="home-outline"
+                  style={{fontSize: 20}}
+                />
               );
             case 'about':
               return focused ? (
-                <Text>Home</Text>
+                <Icon
+                  ios="person"
+                  android="person"
+                  style={{fontSize: 20, color: PRIMARY}}
+                />
               ) : (
-                // <Icon name="info" size={25} color={PRIMARY}></Icon>
-                <Text>Home</Text>
-
-                // <Icon name="info" size={25}></Icon>
+                <Icon
+                  ios="person-outline"
+                  android="person-outline"
+                  style={{fontSize: 20}}
+                />
               );
 
             default:
+              return focused ? (
+                <Icon
+                  ios="home"
+                  android="home"
+                  style={{fontSize: 20, color: PRIMARY}}
+                />
+              ) : (
+                <Icon
+                  ios="home-outline"
+                  android="home-outline"
+                  style={{fontSize: 20}}
+                />
+              );
               break;
           }
         },
@@ -46,6 +70,7 @@ export default function FeatureNavigator() {
         name="home"
         component={Home}
       />
+
       <Tab.Screen
         options={{
           title: 'About Me',

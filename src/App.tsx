@@ -30,8 +30,8 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import AppNavigator from './App.navigator';
-import Home from './components/Home/Home';
-import Login from './components/Login/Login';
+import Home from './components/features/Home/Home';
+import Login from './components/auth/Login/Login';
 import Splash from './components/Splash/Splash';
 import AuthNavigator from './navigations/auth/auth.navigator';
 import FeatureNavigator from './navigations/feature/feature.navigator';

@@ -13,7 +13,7 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {true ? (
+        {false ? (
           <>
             <Stack.Screen
               options={{headerShown: false}}
