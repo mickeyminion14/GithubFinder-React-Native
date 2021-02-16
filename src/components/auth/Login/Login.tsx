@@ -9,10 +9,45 @@ import SocialButton from '../../shared/SocialButton/SocialButton';
 import {windowHeight} from '../../../utils/Dimensions';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {loaderService} from '../../../services/loader.service';
-import {auth, google_provider} from '../../../Firebase/Firebase';
-
+import {Formik} from 'formik';
+import {LoginValidator} from './Login.validator';
+import Tooltip from 'react-native-walkthrough-tooltip';
+import {firebaseAuth} from '../../../Firebase/Firebase';
+import {utilityService} from '../../../services/utility.service';
+import {login} from '../../../Store/slices/userSlice';
+import {useDispatch} from 'react-redux';
 export default function Login({navigation}: any) {
   const [passowordHidden, setPassowordHidden] = useState(true);
+  const dispatch = useDispatch();
+
+  const loginWithEmail = async (values: any) => {
+    console.log(values);
+    loaderService.showLoader(true);
+    try {
+      let {user}: any = await firebaseAuth.signInWithEmailAndPassword(
+        values.email,
+        values.password,
+      );
+      loaderService.showLoader(false);
+      if (user) {
+        console.log(user);
+        dispatch(
+          login({
+            uid: user.uid,
+            photo: user.photoURL,
+            email: user.email,
+            displayName: user.displayName,
+          }),
+        );
+        utilityService.showToast('Success', 'success');
+      }
+    } catch (e) {
+      loaderService.showLoader(false);
+
+      console.log(e);
+      utilityService.showToast('Error', 'danger');
+    }
+  };
   const loginWithGoogle = async () => {
     loaderService.$loader.next(false);
   };
@@ -27,53 +62,79 @@ export default function Login({navigation}: any) {
         animation="fadeInUpBig"
         duration={800}
         style={styles.footer}>
-        <Item style={styles.inputWrapper} regular>
-          <Icon style={{color: PRIMARY}} name="person-outline" />
-          <Input
-            autoCompleteType="email"
-            autoCapitalize="none"
-            placeholder="Email"
-          />
-        </Item>
-        <Item style={styles.inputWrapper} regular>
-          <Icon style={{color: PRIMARY}} name="lock-closed-outline" />
-          <Input
-            secureTextEntry={passowordHidden ? true : false}
-            placeholder="Password"
-          />
-          <Button
-            onPress={() => setPassowordHidden(!passowordHidden)}
-            transparent>
-            {passowordHidden ? (
-              <Icon
-                style={{color: PRIMARY, fontSize: 25, paddingTop: 10}}
-                name="eye-off-outline"
-              />
-            ) : (
-              <Icon
-                style={{color: PRIMARY, fontSize: 25, paddingTop: 10}}
-                name="eye-outline"
-              />
-            )}
-          </Button>
-        </Item>
+        <Formik
+          initialValues={{
+            email: '',
+            password: '',
+          }}
+          onSubmit={(values) => loginWithEmail(values)}
+          validationSchema={LoginValidator}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            isValid,
+            touched,
+          }) => (
+            <>
+              <Item style={styles.inputWrapper} regular>
+                <Icon style={{color: PRIMARY}} name="person-outline" />
+                <Input
+                  onBlur={handleBlur('email')}
+                  onChangeText={handleChange('email')}
+                  value={values.email}
+                  autoCompleteType="email"
+                  autoCapitalize="none"
+                  placeholder="Email"
+                  keyboardType="email-address"
+                />
+              </Item>
+              {errors.email && touched.email && (
+                <Text style={styles.error}>{errors.email}</Text>
+              )}
+              <Item style={styles.inputWrapper} regular>
+                <Icon style={{color: PRIMARY}} name="lock-closed-outline" />
+                <Input
+                  value={values.password}
+                  secureTextEntry={passowordHidden ? true : false}
+                  placeholder="Password"
+                  onBlur={handleBlur('password')}
+                  onChangeText={handleChange('password')}
+                />
+                <Button
+                  onPress={() => setPassowordHidden(!passowordHidden)}
+                  transparent>
+                  {passowordHidden ? (
+                    <Icon
+                      style={{color: PRIMARY, fontSize: 25, paddingTop: 10}}
+                      name="eye-off-outline"
+                    />
+                  ) : (
+                    <Icon
+                      style={{color: PRIMARY, fontSize: 25, paddingTop: 10}}
+                      name="eye-outline"
+                    />
+                  )}
+                </Button>
+              </Item>
+              {errors.password && touched.password && (
+                <Text style={styles.error}>{errors.password}</Text>
+              )}
 
-        <TouchableOpacity
-          onPress={() => {
-            loaderService.$loader.next(true);
-            console.log('sds');
-
-            setTimeout(() => {
-              loaderService.$loader.next(false);
-            }, 2000);
-          }}>
-          <View style={styles.button}>
-            <LinearGradient colors={[PRIMARY, SECONDARY]} style={styles.signIn}>
-              <Text style={styles.textSign}>Log In</Text>
-            </LinearGradient>
-          </View>
-        </TouchableOpacity>
-
+              <TouchableOpacity onPress={handleSubmit}>
+                <View style={styles.button}>
+                  <LinearGradient
+                    colors={[PRIMARY, SECONDARY]}
+                    style={styles.signIn}>
+                    <Text style={styles.textSign}>Login </Text>
+                  </LinearGradient>
+                </View>
+              </TouchableOpacity>
+            </>
+          )}
+        </Formik>
         {/* <View> */}
         <View style={styles.orWrapper}>
           <View style={styles.horizontalLine} />
@@ -176,6 +237,12 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 1,
     backgroundColor: 'gray',
+  },
+  error: {
+    fontSize: 12,
+    color: 'red',
+    paddingTop: 10,
+    paddingLeft: 5,
   },
   orText: {width: 50, textAlign: 'center', color: 'gray'},
 });

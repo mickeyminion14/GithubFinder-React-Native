@@ -13,6 +13,7 @@ import {View} from 'native-base';
 import {PRIMARY} from './styles/colors';
 import {windowWidth} from './utils/Dimensions';
 import Loader from './components/shared/Loader/Loader';
+import {Root} from 'native-base';
 
 declare const global: {HermesInternal: null | {}};
 
@@ -36,7 +37,9 @@ const App = () => {
     <>
       <Provider store={store}>
         {loading && <Loader />}
-        <AppNavigator />
+        <Root>
+          <AppNavigator />
+        </Root>
       </Provider>
     </>
   );
