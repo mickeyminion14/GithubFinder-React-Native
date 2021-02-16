@@ -10,10 +10,12 @@ export default function SocialButton({
   type,
   color,
   backgroundColor,
+  onPress,
   ...rest
 }: any) {
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={[styles.buttonContainer, {backgroundColor: backgroundColor}]}
       {...rest}>
       <View style={styles.iconWrapper}>

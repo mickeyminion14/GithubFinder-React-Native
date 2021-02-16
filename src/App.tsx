@@ -1,51 +1,43 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import React, {useEffect, useState} from 'react';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import React, {useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  Platform,
-} from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import AppNavigator from './App.navigator';
-import Home from './components/features/Home/Home';
-import Login from './components/auth/Login/Login';
-import Splash from './components/Splash/Splash';
-import AuthNavigator from './navigations/auth/auth.navigator';
-import FeatureNavigator from './navigations/feature/feature.navigator';
+
+import {Provider} from 'react-redux';
+import store from './Store/store';
+import {Subscription} from 'rxjs';
+import {loaderService} from './services/loader.service';
+import {ActivityIndicator} from 'react-native';
+import {View} from 'native-base';
+import {PRIMARY} from './styles/colors';
+import {windowWidth} from './utils/Dimensions';
+import Loader from './components/shared/Loader/Loader';
 
 declare const global: {HermesInternal: null | {}};
-const Stack = createStackNavigator();
 
 const App = () => {
+  const sub: Subscription = new Subscription();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     SplashScreen.hide();
+
+    sub.add(
+      loaderService.$loader.subscribe((loading) => {
+        setLoading(loading);
+      }),
+    );
+    return () => {
+      sub.unsubscribe();
+    };
   }, []);
+
   return (
     <>
-      <AppNavigator />
+      <Provider store={store}>
+        {loading && <Loader />}
+        <AppNavigator />
+      </Provider>
     </>
   );
 };

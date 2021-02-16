@@ -1,15 +1,21 @@
 import React from 'react';
 import {Platform, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {PRIMARY, SECONDARY, WHITE} from '../../../styles/colors';
-import {Button, Icon, Input, Item} from 'native-base';
+import {Button, Icon, Input, Item, Toast} from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import {useState} from 'react';
 import SocialButton from '../../shared/SocialButton/SocialButton';
 import {windowHeight} from '../../../utils/Dimensions';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {loaderService} from '../../../services/loader.service';
+import {auth, google_provider} from '../../../Firebase/Firebase';
+
 export default function Login({navigation}: any) {
   const [passowordHidden, setPassowordHidden] = useState(true);
+  const loginWithGoogle = async () => {
+    loaderService.$loader.next(false);
+  };
   return (
     <View style={styles.loginContainer}>
       <StatusBar backgroundColor={PRIMARY} barStyle="light-content" />
@@ -52,7 +58,15 @@ export default function Login({navigation}: any) {
           </Button>
         </Item>
 
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            loaderService.$loader.next(true);
+            console.log('sds');
+
+            setTimeout(() => {
+              loaderService.$loader.next(false);
+            }, 2000);
+          }}>
           <View style={styles.button}>
             <LinearGradient colors={[PRIMARY, SECONDARY]} style={styles.signIn}>
               <Text style={styles.textSign}>Log In</Text>
@@ -75,6 +89,7 @@ export default function Login({navigation}: any) {
           color="#4867aa"
         />
         <SocialButton
+          onPress={loginWithGoogle}
           buttonText="Continue with Google"
           backgroundColor="#f5e7ea"
           type="logo-google"
