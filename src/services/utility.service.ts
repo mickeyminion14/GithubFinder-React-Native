@@ -14,7 +14,7 @@ class UtilityService {
       type,
       position: 'bottom',
       onClose: onClose ? onClose : undefined,
-      buttonText: 'close',
+      buttonText: 'Close',
       swipeDisabled: false,
     });
   }

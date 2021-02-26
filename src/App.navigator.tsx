@@ -5,21 +5,42 @@ import AuthNavigator from './navigations/auth/auth.navigator';
 import FeatureNavigator from './navigations/feature/feature.navigator';
 import {PRIMARY, WHITE} from './styles/colors';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {useSelector} from 'react-redux';
-import {selectUser} from './Store/slices/userSlice';
-import {Subscription} from 'rxjs';
+import {useDispatch, useSelector} from 'react-redux';
+import {login, selectUser} from './Store/slices/userSlice';
+
+import auth from '@react-native-firebase/auth';
 import {loaderService} from './services/loader.service';
-import Loader from './components/shared/Loader/Loader';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export default function AppNavigator() {
   const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    console.info(user, 'ss');
-    return () => {};
+    loaderService.$loader.next(true);
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
   }, []);
+
+  const onAuthStateChanged = (user: any) => {
+    if (user) {
+      console.log(user);
+      dispatch(
+        login({
+          uid: user.uid,
+          photo: user.photoURL,
+          email: user.email,
+          displayName: user.displayName,
+        }),
+      );
+
+      loaderService.$loader.next(false);
+    } else {
+      loaderService.$loader.next(false);
+    }
+  };
   return (
     <NavigationContainer>
       <Stack.Navigator>

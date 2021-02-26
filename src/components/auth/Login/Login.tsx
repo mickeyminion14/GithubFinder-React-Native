@@ -16,6 +16,10 @@ import {firebaseAuth} from '../../../Firebase/Firebase';
 import {utilityService} from '../../../services/utility.service';
 import {login} from '../../../Store/slices/userSlice';
 import {useDispatch} from 'react-redux';
+import {GoogleSignin} from '@react-native-community/google-signin';
+import auth from '@react-native-firebase/auth';
+import {TOAST_MESSAGES} from '../../../constants/messages';
+
 export default function Login({navigation}: any) {
   const [passowordHidden, setPassowordHidden] = useState(true);
   const dispatch = useDispatch();
@@ -45,11 +49,38 @@ export default function Login({navigation}: any) {
       loaderService.showLoader(false);
 
       console.log(e);
-      utilityService.showToast('Error', 'danger');
+      utilityService.showToast(TOAST_MESSAGES.ACCOUNT_DOES_NOT_EXIST, 'danger');
     }
   };
   const loginWithGoogle = async () => {
-    loaderService.$loader.next(false);
+    loaderService.$loader.next(true);
+
+    try {
+      const {idToken} = await GoogleSignin.signIn();
+
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      let {user} = await auth().signInWithCredential(googleCredential);
+      console.log(user);
+      if (user) {
+        console.log(user);
+        dispatch(
+          login({
+            uid: user.uid,
+            photo: user.photoURL,
+            email: user.email,
+            displayName: user.displayName,
+          }),
+        );
+        utilityService.showToast('Success', 'success');
+      }
+      loaderService.$loader.next(false);
+    } catch (error) {
+      console.log(error);
+      loaderService.$loader.next(false);
+    }
   };
   return (
     <View style={styles.loginContainer}>
@@ -136,26 +167,31 @@ export default function Login({navigation}: any) {
           )}
         </Formik>
         {/* <View> */}
-        <View style={styles.orWrapper}>
-          <View style={styles.horizontalLine} />
-          <View>
-            <Text style={styles.orText}>OR</Text>
-          </View>
-          <View style={styles.horizontalLine} />
-        </View>
-        <SocialButton
-          buttonText="Continue with Facebook"
-          backgroundColor="#e6eaf4"
-          type="logo-facebook"
-          color="#4867aa"
-        />
-        <SocialButton
-          onPress={loginWithGoogle}
-          buttonText="Continue with Google"
-          backgroundColor="#f5e7ea"
-          type="logo-google"
-          color="#de4d41"
-        />
+        {Platform.OS === 'android' ? (
+          <>
+            <View style={styles.orWrapper}>
+              <View style={styles.horizontalLine} />
+              <View>
+                <Text style={styles.orText}>OR</Text>
+              </View>
+              <View style={styles.horizontalLine} />
+            </View>
+
+            <SocialButton
+              buttonText="Continue with Facebook"
+              backgroundColor="#e6eaf4"
+              type="logo-facebook"
+              color="#4867aa"
+            />
+            <SocialButton
+              onPress={loginWithGoogle}
+              buttonText="Continue with Google"
+              backgroundColor="#f5e7ea"
+              type="logo-google"
+              color="#de4d41"
+            />
+          </>
+        ) : null}
         {/* </View> */}
       </Animatable.View>
     </View>
