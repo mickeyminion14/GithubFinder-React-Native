@@ -58,7 +58,6 @@ export default function FeatureNavigator() {
                   style={{fontSize: 20}}
                 />
               );
-              break;
           }
         },
       })}

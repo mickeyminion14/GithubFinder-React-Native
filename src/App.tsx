@@ -34,14 +34,15 @@ const App = () => {
   }, []);
 
   return (
-    <>
+    <View style={{flex: 1}}>
       <Provider store={store}>
         {loading && <Loader />}
+
         <Root>
           <AppNavigator />
         </Root>
       </Provider>
-    </>
+    </View>
   );
 };
 

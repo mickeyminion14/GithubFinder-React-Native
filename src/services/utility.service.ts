@@ -1,4 +1,8 @@
 import {Toast} from 'native-base';
+import {Alert} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {logout} from '../Store/slices/userSlice';
+import {IConfirmDialog} from '../types/types';
 
 class UtilityService {
   constructor() {}
@@ -17,6 +21,26 @@ class UtilityService {
       buttonText: 'Close',
       swipeDisabled: false,
     });
+  }
+
+  showConfirmationDialog(options: IConfirmDialog): void {
+    Alert.alert(
+      options.title,
+      options.message || '',
+      [
+        {
+          text: options.negativeButtonText || 'No',
+          onPress: () => options.negativeAction || null,
+          style: 'destructive',
+        },
+        {
+          text: options.positiveButtonText || 'Yes',
+          onPress: () => options.positiveAction(),
+        },
+      ],
+
+      {cancelable: false},
+    );
   }
 }
 

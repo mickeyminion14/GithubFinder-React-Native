@@ -3,6 +3,7 @@ import Login from '../../components/auth/Login/Login';
 import React, {useEffect} from 'react';
 import Landing from '../../components/auth/Landing/Landing';
 import {GoogleSignin} from '@react-native-community/google-signin';
+import {View} from 'native-base';
 
 const Stack = createStackNavigator();
 
@@ -15,7 +16,9 @@ export default function AuthNavigator() {
     return () => {};
   }, []);
   return (
-    <Stack.Navigator initialRouteName="landing">
+    <Stack.Navigator
+      screenOptions={{animationEnabled: false}}
+      initialRouteName="landing">
       <Stack.Screen
         name="landing"
         component={Landing}

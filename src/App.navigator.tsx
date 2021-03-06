@@ -46,7 +46,7 @@ export default function AppNavigator() {
   };
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{animationEnabled: false}}>
         {user ? (
           <>
             <Stack.Screen
