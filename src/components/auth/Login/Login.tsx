@@ -178,6 +178,7 @@ export default function Login({navigation}: any) {
             </View>
 
             <SocialButton
+              onPress={utilityService.showToast('Under Development', 'warning')}
               buttonText="Continue with Facebook"
               backgroundColor="#e6eaf4"
               type="logo-facebook"

@@ -10,6 +10,7 @@ import {login, selectUser} from './Store/slices/userSlice';
 
 import auth from '@react-native-firebase/auth';
 import {loaderService} from './services/loader.service';
+import {InterceptorService} from './services/interceptor.service';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -19,6 +20,8 @@ export default function AppNavigator() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    InterceptorService.intercept();
+
     loaderService.$loader.next(true);
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;

@@ -18,15 +18,15 @@ export default function FeatureNavigator() {
             case 'home':
               return focused ? (
                 <Icon
-                  ios="home"
-                  android="home"
-                  style={{fontSize: 20, color: PRIMARY}}
+                  ios="search"
+                  android="search"
+                  style={{fontSize: 20, color: 'white'}}
                 />
               ) : (
                 <Icon
-                  ios="home-outline"
-                  android="home-outline"
-                  style={{fontSize: 20}}
+                  ios="search-outline"
+                  android="search-outline"
+                  style={{fontSize: 20, color: 'white'}}
                 />
               );
             case 'about':
@@ -34,13 +34,13 @@ export default function FeatureNavigator() {
                 <Icon
                   ios="person"
                   android="person"
-                  style={{fontSize: 20, color: PRIMARY}}
+                  style={{fontSize: 20, color: 'white'}}
                 />
               ) : (
                 <Icon
                   ios="person-outline"
                   android="person-outline"
-                  style={{fontSize: 20}}
+                  style={{fontSize: 20, color: 'white'}}
                 />
               );
 
@@ -62,7 +62,16 @@ export default function FeatureNavigator() {
           }
         },
       })}
-      tabBarOptions={{activeTintColor: PRIMARY, activeBackgroundColor: GRAY}}>
+      tabBarOptions={{
+        activeTintColor: 'white',
+        inactiveTintColor: 'white',
+        activeBackgroundColor: PRIMARY,
+        keyboardHidesTabBar: true,
+        showLabel: false,
+        style: {
+          backgroundColor: PRIMARY,
+        },
+      }}>
       <Tab.Screen
         options={{
           title: 'Home',
